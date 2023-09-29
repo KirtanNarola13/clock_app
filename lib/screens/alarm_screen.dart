@@ -49,10 +49,10 @@ class _AlarmPageState extends State<AlarmPage> {
   @override
   void initState() {
     super.initState();
-    timerrr();
+    timerr();
   }
 
-  timerrr() async {
+  timerr() async {
     await Future.delayed(
       const Duration(seconds: 1),
       () {
@@ -71,7 +71,7 @@ class _AlarmPageState extends State<AlarmPage> {
         });
       },
     );
-    Timer();
+    timerr();
   }
 
   // ignore: non_constant_identifier_names
@@ -270,7 +270,7 @@ class _AlarmPageState extends State<AlarmPage> {
             child: Expanded(
               flex: 9,
               child: Stack(
-                alignment: const Alignment(-1, 0.2),
+                alignment: const Alignment(0.8, 1.1),
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
