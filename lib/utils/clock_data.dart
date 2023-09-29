@@ -1,3 +1,5 @@
+import 'dart:async';
+
 List<String> days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 List<String> hour = [
   "00",
@@ -138,3 +140,26 @@ List<String> second = [
   "58",
   "59",
 ];
+
+class Timer {
+  int houre = 00, min = 00, sec = 00;
+
+  Future? timer() {
+    Future.delayed(
+      Duration(seconds: 1),
+      () {
+        if (sec >= 0 && sec <= 59) {
+          sec++;
+        }
+        if (sec > 59) {
+          sec = 00;
+          min += 1;
+        } else if (min > 59) {
+          min = 00;
+          houre += 1;
+        }
+      },
+    );
+    timer();
+  }
+}

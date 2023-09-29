@@ -1,5 +1,4 @@
 import 'package:clock_app/utils/clock_data.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 class AlarmPage extends StatefulWidget {
@@ -20,6 +19,7 @@ class _AlarmPageState extends State<AlarmPage> {
   bool isOver = false;
   bool isPause = false;
   bool isSelect = false;
+  Timer t = Timer();
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -168,7 +168,7 @@ class _AlarmPageState extends State<AlarmPage> {
                       scaleX: 0.9,
                       child: Neumorphic(
                         style: NeumorphicStyle(
-                          color: Colors.grey.shade200,
+                          color: Colors.transparent,
                           depth: -5,
                           intensity: 1,
                         ),
@@ -223,6 +223,9 @@ class _AlarmPageState extends State<AlarmPage> {
                                   ),
                                   Container(
                                     width: 90,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                    ),
                                     child: ListWheelScrollView(
                                       itemExtent: 50,
                                       perspective: 0.005,
@@ -246,6 +249,9 @@ class _AlarmPageState extends State<AlarmPage> {
                                   ),
                                   Container(
                                     width: 90,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                    ),
                                     child: ListWheelScrollView(
                                       itemExtent: 50,
                                       perspective: 0.005,
@@ -430,13 +436,14 @@ class _AlarmPageState extends State<AlarmPage> {
                           child: Align(
                             alignment: Alignment.center,
                             child: NeumorphicText(
-                              "00:00:00",
+                              "${t.houre}:${t.min}:${t.sec}",
                               textStyle: NeumorphicTextStyle(
                                 fontSize: 12,
                               ),
                               style: NeumorphicStyle(
                                 depth: 1,
                                 intensity: 1,
+                                color: Colors.black,
                               ),
                             ),
                           ),
@@ -468,11 +475,17 @@ class _AlarmPageState extends State<AlarmPage> {
                                       color: Colors.grey.shade200,
                                     ),
                                     child: (isPlayed != true)
-                                        ? const Text(
-                                            "Start",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 22,
+                                        ? Transform.scale(
+                                            scale: 1.45,
+                                            child: NeumorphicButton(
+                                              onPressed: () {},
+                                              child: Text(
+                                                "Start",
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 22,
+                                                ),
+                                              ),
                                             ),
                                           )
                                         : const Text(
