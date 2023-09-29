@@ -1,6 +1,16 @@
 import 'dart:async';
 
-List<String> days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+import 'package:flutter/cupertino.dart';
+
+List<Map> days = [
+  {'day': 'SUN', 'isDay': false},
+  {'day': 'MON', 'isDay': false},
+  {'day': 'TUE', 'isDay': false},
+  {'day': 'WED', 'isDay': false},
+  {'day': 'THU', 'isDay': false},
+  {'day': 'FRI', 'isDay': false},
+  {'day': 'SAT', 'isDay': false},
+];
 List<String> hour = [
   "00",
   "01",
@@ -141,6 +151,9 @@ List<String> second = [
   "59",
 ];
 
+List Alarm = [];
+List Records = [];
+
 class Timer {
   int houre = 00, min = 00, sec = 00;
 
@@ -161,5 +174,25 @@ class Timer {
       },
     );
     timer();
+  }
+}
+
+class ClockData {
+  // Other properties and methods...
+
+  static int selectedHour = 0;
+  static int selectedMinute = 0;
+  static int selectedSecond = 0;
+
+  static int getSelectedHour() {
+    return selectedHour;
+  }
+
+  static int getSelectedMinute() {
+    return selectedMinute;
+  }
+
+  static int getSelectedSecond() {
+    return selectedSecond;
   }
 }

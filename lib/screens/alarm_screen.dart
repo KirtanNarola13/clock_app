@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'dart:async';
 import 'package:clock_app/utils/clock_data.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -18,8 +20,242 @@ class _AlarmPageState extends State<AlarmPage> {
   bool isStart = false;
   bool isOver = false;
   bool isPause = false;
+  bool isRecorded = false;
+  int SecStop = 0;
+  int MinStop = 0;
+  int HourStop = 0;
+  String DigitSec = "00";
+  String DigitMin = "00";
+  String DigitHour = "00";
+  int recordIndex = 0;
   bool isSelect = false;
-  Timer t = Timer();
+  bool isDay = false;
+  double secDiv = 3 * pi / 2;
+  int secCount = 0;
+  double minuteDiv = 3 * pi / 2;
+  int minCount = 0;
+  double hourDiv = 3 * pi / 2;
+  int hourCount = 0;
+  TimeOfDay selectedTime = TimeOfDay.now();
+  int selectedHour = 0;
+  int selectedMinute = 0;
+  int selectedSecond = 0;
+  String DigitselectedHour = "00";
+  String DigitselectedMinute = "00";
+  String DigitselectedSecond = "00";
+  String currentTimerValue = "";
+  String lastRecordedTime = "";
+
+  @override
+  void initState() {
+    super.initState();
+    timerrr();
+  }
+
+  timerrr() async {
+    await Future.delayed(
+      const Duration(seconds: 1),
+      () {
+        setState(() {
+          secDiv += pi / 30;
+          secCount++;
+          if (secCount == 60) {
+            secCount = 0;
+            minuteDiv += pi / 30;
+            minCount++;
+          }
+          if (minCount == 60) {
+            hourDiv += pi / 6;
+            minCount = 0;
+          }
+        });
+      },
+    );
+    Timer();
+  }
+
+  // ignore: non_constant_identifier_names
+  int Index() {
+    recordIndex++;
+    return recordIndex;
+  }
+
+  void stop() {
+    isStart = false;
+  }
+
+  void reset() {
+    setState(() {
+      isStart = false;
+      SecStop = 0;
+      MinStop = 0;
+      HourStop = 0;
+      DigitHour = "00";
+      DigitMin = "00";
+      DigitSec = "00";
+      Records.clear(); // Clear the list of records
+    });
+  }
+
+  void addRecord(val) {
+    if (isStart) {
+      setState(() {
+        lastRecordedTime = val;
+        Records.add(lastRecordedTime);
+      });
+    }
+  }
+
+  void start() async {
+    isStart = true;
+    await Future.delayed(
+      const Duration(seconds: 1),
+      () {
+        setState(() {
+          SecStop++;
+          if (SecStop > 59) {
+            MinStop++;
+            SecStop = 0;
+          }
+          if (MinStop > 59) {
+            HourStop++;
+            MinStop = 0;
+          }
+          if (HourStop > 23) {
+            HourStop = 0;
+          }
+          DigitSec = (SecStop >= 10) ? "$SecStop" : "0$SecStop";
+          DigitMin = (MinStop >= 10) ? "$MinStop" : "0$MinStop";
+          DigitHour = (HourStop >= 10) ? "$HourStop" : "0$HourStop";
+          currentTimerValue = "$DigitHour:$DigitMin:$DigitSec";
+        });
+      },
+    );
+    (isStart == true) ? start() : stop();
+  }
+
+  void SelectedHourIncrees() {
+    setState(() {
+      if (selectedHour == 12) {
+        selectedHour = 12;
+      } else {
+        selectedHour++;
+      }
+      DigitselectedHour =
+          (selectedHour > 9) ? "$selectedHour" : "0$selectedHour";
+    });
+  }
+
+  void SelectedHourDecrees() {
+    setState(() {
+      if (selectedHour > 0) {
+        selectedHour--;
+      } else {
+        selectedHour = 0;
+      }
+      DigitselectedHour =
+          (selectedHour > 9) ? "$selectedHour" : "0$selectedHour";
+    });
+  }
+
+  void SelectedMinIncrees() {
+    setState(() {
+      if (selectedMinute == 59) {
+        selectedMinute = 59;
+      } else {
+        selectedMinute++;
+      }
+      DigitselectedMinute =
+          (selectedMinute > 9) ? "$selectedMinute" : "0$selectedMinute";
+    });
+  }
+
+  void SelectedMinDecrees() {
+    setState(() {
+      if (selectedMinute > 0) {
+        selectedMinute--;
+      } else {
+        selectedMinute = 0;
+      }
+      DigitselectedMinute =
+          (selectedMinute > 9) ? "$selectedMinute" : "0$selectedMinute";
+    });
+  }
+
+  void SelectedSecIncrees() {
+    setState(() {
+      if (selectedSecond == 59) {
+        selectedSecond = 59;
+      } else {
+        selectedSecond++;
+      }
+      DigitselectedSecond =
+          (selectedSecond > 9) ? "$selectedSecond" : "0$selectedSecond";
+    });
+  }
+
+  void SelectedSecDecrees() {
+    setState(() {
+      if (selectedSecond > 0) {
+        selectedSecond--;
+      } else {
+        selectedSecond = 0;
+      }
+      DigitselectedSecond =
+          (selectedSecond > 9) ? "$selectedSecond" : "0$selectedSecond";
+    });
+  }
+
+  void countStop() {
+    isStart = false;
+  }
+
+  void countReset() {
+    isStart = false;
+    selectedSecond = 0;
+    selectedMinute = 0;
+    selectedHour = 0;
+
+    DigitselectedSecond = "00";
+    DigitselectedMinute = "00";
+    DigitselectedHour = "00";
+  }
+
+  void countStart() async {
+    isStart = true;
+    await Future.delayed(
+      const Duration(seconds: 1),
+      () {
+        setState(() {
+          if (selectedSecond > 0) {
+            selectedSecond--;
+          } else {
+            if (selectedMinute > 0) {
+              selectedMinute--;
+              selectedSecond = 59;
+            } else {
+              if (selectedHour > 0) {
+                selectedHour--;
+                selectedMinute = 59;
+                selectedSecond = 59;
+              }
+            }
+          }
+          if (selectedHour == 0 && selectedMinute == 0 && selectedSecond == 0) {
+            isStart = false;
+          }
+          DigitselectedHour =
+              (selectedHour > 10) ? "$selectedHour" : "0$selectedHour";
+          DigitselectedMinute =
+              (selectedMinute > 10) ? "$selectedMinute" : "0$selectedMinute";
+          DigitselectedSecond =
+              (selectedSecond > 10) ? "$selectedSecond" : "0$selectedSecond";
+        });
+      },
+    );
+    (isStart == true) ? countStart() : countStop();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -33,118 +269,269 @@ class _AlarmPageState extends State<AlarmPage> {
             visible: (isAlarmPressed == true) ? true : false,
             child: Expanded(
               flex: 9,
-              child: Column(
+              child: Stack(
+                alignment: const Alignment(-1, 0.2),
                 children: [
-                  Expanded(
-                    flex: 7,
-                    child: Neumorphic(
-                      style: NeumorphicStyle(
-                        color: Colors.grey.shade200,
-                        boxShape: const NeumorphicBoxShape.circle(),
-                      ),
-                      child: SizedBox(
-                        height: height / 1.3,
-                        width: width / 1.3,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Neumorphic(
-                            style: NeumorphicStyle(
-                              color: Colors.grey.shade200,
-                              boxShape: const NeumorphicBoxShape.circle(),
-                            ),
-                            child: SizedBox(
-                              height: height / 3,
-                              width: width / 3,
-                            ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 7,
+                        child: Neumorphic(
+                          style: NeumorphicStyle(
+                            color: Colors.grey.shade200,
+                            boxShape: const NeumorphicBoxShape.circle(),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Neumorphic(
-                            padding: const EdgeInsets.only(
-                              top: 5,
-                              bottom: 5,
-                              left: 20,
-                              right: 20,
-                            ),
-                            style: NeumorphicStyle(
-                              color: Colors.grey.shade200,
-                            ),
-                            child: SizedBox(
-                              height: height / 9.8,
-                              width: width / 1.3,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                          child: SizedBox(
+                            height: height / 1.3,
+                            width: width / 1.3,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Stack(
+                                alignment: Alignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "06:30",
-                                        style: TextStyle(
-                                          color: (isAlarm != true)
-                                              ? Colors.black12
-                                              : Colors.black,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Transform.scale(
-                                        scaleX: 0.5,
-                                        scaleY: 0.5,
-                                        child: NeumorphicSwitch(
-                                            style: NeumorphicSwitchStyle(
-                                              inactiveTrackColor:
-                                                  Colors.black12,
-                                              activeTrackColor: Colors.black45,
-                                              activeThumbColor:
-                                                  Colors.grey.shade200,
-                                              inactiveThumbColor:
-                                                  Colors.grey.shade200,
-                                            ),
-                                            value: isTrue,
-                                            onChanged: (val) {
-                                              setState(() {
-                                                isAlarm = !isAlarm;
-                                                isTrue = val;
-                                              });
-                                            }),
-                                      ),
-                                    ],
+                                  Transform.rotate(
+                                    angle: pi / 2,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      endIndent: 300,
+                                    ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: days.map((e) {
-                                      return NeumorphicText(
-                                        e,
-                                        textStyle: NeumorphicTextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        style: const NeumorphicStyle(
-                                          color: Colors.black12,
-                                          depth: 5,
-                                          intensity: 0.5,
-                                        ),
-                                      );
-                                    }).toList(),
+                                  Transform.rotate(
+                                    angle: pi,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      endIndent: 300,
+                                    ),
+                                  ),
+                                  Transform.rotate(
+                                    angle: 3 * pi / 2,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      endIndent: 300,
+                                    ),
+                                  ),
+                                  Transform.rotate(
+                                    angle: 2 * pi,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      endIndent: 300,
+                                    ),
+                                  ),
+                                  Neumorphic(
+                                    style: NeumorphicStyle(
+                                      color: Colors.grey.shade200,
+                                      boxShape:
+                                          const NeumorphicBoxShape.circle(),
+                                    ),
+                                    child: SizedBox(
+                                      height: height / 3,
+                                      width: width / 3,
+                                    ),
+                                  ),
+                                  Transform.rotate(
+                                    angle: secDiv,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      color: Colors.black12,
+                                      endIndent: 30,
+                                      indent: 140,
+                                    ),
+                                  ),
+                                  Transform.rotate(
+                                    angle: minuteDiv,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      color: Colors.black,
+                                      endIndent: 60,
+                                      indent: 145,
+                                    ),
+                                  ),
+                                  Transform.rotate(
+                                    angle: hourDiv,
+                                    child: const Divider(
+                                      thickness: 2,
+                                      color: Colors.red,
+                                      endIndent: 100,
+                                      indent: 145,
+                                    ),
+                                  ),
+                                  Transform.scale(
+                                    scale: 2,
+                                    child: Neumorphic(
+                                      style: NeumorphicStyle(
+                                        depth: 1,
+                                        intensity: 1,
+                                        color: Colors.grey.shade200,
+                                      ),
+                                      child: SizedBox(
+                                        height: height / 150,
+                                        width: width / 60,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                          )
-                        ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: Alarm.map((e) {
+                                return Stack(
+                                  alignment: const Alignment(1.05, -1.4),
+                                  children: [
+                                    Neumorphic(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 7),
+                                        padding: const EdgeInsets.only(
+                                          top: 5,
+                                          bottom: 5,
+                                          left: 20,
+                                          right: 20,
+                                        ),
+                                        style: NeumorphicStyle(
+                                          color: Colors.grey.shade200,
+                                        ),
+                                        child: SizedBox(
+                                          height: height / 10.2,
+                                          width: width / 1.4,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "${selectedTime.hour}:${selectedTime.minute}",
+                                                    style: TextStyle(
+                                                      color: (isAlarm != true)
+                                                          ? Colors.black12
+                                                          : Colors.black,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: height / 15,
+                                                  ),
+                                                  Transform.scale(
+                                                    scaleX: 0.5,
+                                                    scaleY: 0.5,
+                                                    child: NeumorphicSwitch(
+                                                        style:
+                                                            NeumorphicSwitchStyle(
+                                                          inactiveTrackColor:
+                                                              Colors.black12,
+                                                          activeTrackColor:
+                                                              Colors.black45,
+                                                          activeThumbColor:
+                                                              Colors.grey
+                                                                  .shade200,
+                                                          inactiveThumbColor:
+                                                              Colors.grey
+                                                                  .shade200,
+                                                        ),
+                                                        value: isTrue,
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            isAlarm = !isAlarm;
+                                                            isTrue = val;
+                                                          });
+                                                        }),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: days.map((e) {
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      e['isDay'] = !e['isDay'];
+                                                    },
+                                                    child: NeumorphicText(
+                                                      "${e['day']}",
+                                                      textStyle:
+                                                          NeumorphicTextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      style: NeumorphicStyle(
+                                                        color:
+                                                            (e['isDay'] != true)
+                                                                ? Colors.black12
+                                                                : Colors.black,
+                                                        depth: 5,
+                                                        intensity: 0.5,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            ],
+                                          ),
+                                        )),
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          Alarm.remove(e);
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.red,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Transform.scale(
+                    scale: 0.9,
+                    child: NeumorphicButton(
+                      margin: const EdgeInsets.only(
+                        left: 20,
+                      ),
+                      style: NeumorphicStyle(
+                        depth: 1,
+                        intensity: 1,
+                        color: Colors.grey.shade200,
+                      ),
+                      onPressed: () async {
+                        final TimeOfDay? timeOfDay = await showTimePicker(
+                          context: context,
+                          initialTime: selectedTime,
+                          initialEntryMode: TimePickerEntryMode.dial,
+                        ).then(
+                          (value) {
+                            selectedTime = value!;
+                          },
+                        );
+                        setState(() {
+                          Alarm.add(selectedTime);
+                        });
+                      },
+                      child: const Icon(
+                        Icons.add,
                       ),
                     ),
                   ),
@@ -158,7 +545,7 @@ class _AlarmPageState extends State<AlarmPage> {
               flex: 9,
               child: Column(
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 2,
                     child: SizedBox(),
                   ),
@@ -167,7 +554,7 @@ class _AlarmPageState extends State<AlarmPage> {
                     child: Transform.scale(
                       scaleX: 0.9,
                       child: Neumorphic(
-                        style: NeumorphicStyle(
+                        style: const NeumorphicStyle(
                           color: Colors.transparent,
                           depth: -5,
                           intensity: 1,
@@ -177,103 +564,204 @@ class _AlarmPageState extends State<AlarmPage> {
                             Expanded(
                               flex: 5,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: (isStart != true)
+                                        ? MainAxisAlignment.spaceEvenly
+                                        : MainAxisAlignment.center,
                                     children: [
-                                      Transform.scale(
-                                        scale: 3,
-                                        child: NeumorphicIcon(
-                                          Icons.arrow_right,
-                                          style: NeumorphicStyle(
-                                            color: Colors.black,
-                                            depth: 1,
-                                            intensity: 1,
+                                      SizedBox(
+                                        height: height / 20,
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            (isStart != true) ? true : false,
+                                        child: Transform.scale(
+                                          scale: 0.7,
+                                          child: NeumorphicButton(
+                                            style: NeumorphicStyle(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                SelectedHourDecrees();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              size: 32,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      NeumorphicText(
+                                        "$DigitselectedHour",
+                                        textStyle: NeumorphicTextStyle(
+                                          fontSize: 42,
+                                        ),
+                                        style: NeumorphicStyle(
+                                          color: Colors.black,
+                                          depth: 1,
+                                          intensity: 1,
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            (isStart != true) ? true : false,
+                                        child: Transform.scale(
+                                          scale: 0.7,
+                                          child: NeumorphicButton(
+                                            style: NeumorphicStyle(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                SelectedHourIncrees();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_drop_up_sharp,
+                                              size: 32,
+                                            ),
                                           ),
                                         ),
                                       ),
                                       SizedBox(
-                                        height: height / 50,
+                                        height: height / 20,
                                       ),
                                     ],
                                   ),
-                                  Container(
-                                    width: 90,
-                                    child: ListWheelScrollView(
-                                      itemExtent: 50,
-                                      overAndUnderCenterOpacity: 0.2,
-                                      perspective: 0.005,
-                                      diameterRatio: 1.2,
-                                      physics: FixedExtentScrollPhysics(),
-                                      children: hour.map((e) {
-                                        return NeumorphicText(
-                                          "$e",
-                                          style: NeumorphicStyle(
-                                            color: Colors.black,
-                                            depth: 1,
-                                            intensity: 1,
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      SizedBox(
+                                        height: height / 20,
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            (isStart != true) ? true : false,
+                                        child: Transform.scale(
+                                          scale: 0.7,
+                                          child: NeumorphicButton(
+                                            style: NeumorphicStyle(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                SelectedMinDecrees();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              size: 32,
+                                            ),
                                           ),
-                                          textStyle: NeumorphicTextStyle(
-                                            fontSize: 32,
+                                        ),
+                                      ),
+                                      NeumorphicText(
+                                        "$DigitselectedMinute",
+                                        textStyle: NeumorphicTextStyle(
+                                          fontSize: 42,
+                                        ),
+                                        style: NeumorphicStyle(
+                                          color: Colors.black,
+                                          depth: 1,
+                                          intensity: 1,
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            (isStart != true) ? true : false,
+                                        child: Transform.scale(
+                                          scale: 0.7,
+                                          child: NeumorphicButton(
+                                            style: NeumorphicStyle(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                SelectedMinIncrees();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_drop_up_sharp,
+                                              size: 32,
+                                            ),
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: height / 20,
+                                      ),
+                                    ],
                                   ),
-                                  Container(
-                                    width: 90,
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: ListWheelScrollView(
-                                      itemExtent: 50,
-                                      perspective: 0.005,
-                                      diameterRatio: 1.2,
-                                      overAndUnderCenterOpacity: 0.2,
-                                      physics: FixedExtentScrollPhysics(),
-                                      children: min.map((e) {
-                                        return NeumorphicText(
-                                          "$e",
-                                          style: NeumorphicStyle(
-                                            color: Colors.black,
-                                            depth: 1,
-                                            intensity: 1,
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      SizedBox(
+                                        height: height / 20,
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            (isStart != true) ? true : false,
+                                        child: Transform.scale(
+                                          scale: 0.7,
+                                          child: NeumorphicButton(
+                                            style: NeumorphicStyle(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                SelectedSecDecrees();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_drop_down_sharp,
+                                              size: 32,
+                                            ),
                                           ),
-                                          textStyle: NeumorphicTextStyle(
-                                            fontSize: 32,
+                                        ),
+                                      ),
+                                      NeumorphicText(
+                                        "$DigitselectedSecond",
+                                        textStyle: NeumorphicTextStyle(
+                                          fontSize: 42,
+                                        ),
+                                        style: NeumorphicStyle(
+                                          color: Colors.black,
+                                          depth: 1,
+                                          intensity: 1,
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible:
+                                            (isStart != true) ? true : false,
+                                        child: Transform.scale(
+                                          scale: 0.7,
+                                          child: NeumorphicButton(
+                                            style: NeumorphicStyle(
+                                              color: Colors.grey.shade200,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                SelectedSecIncrees();
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_drop_up_sharp,
+                                              size: 32,
+                                            ),
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 90,
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: ListWheelScrollView(
-                                      itemExtent: 50,
-                                      perspective: 0.005,
-                                      diameterRatio: 1.2,
-                                      overAndUnderCenterOpacity: 0.2,
-                                      onSelectedItemChanged: (value) =>
-                                          isSelect = true,
-                                      physics: FixedExtentScrollPhysics(),
-                                      children: second.map((e) {
-                                        return NeumorphicText(
-                                          "$e",
-                                          style: NeumorphicStyle(
-                                            color: Colors.black,
-                                            depth: 1,
-                                            intensity: 1,
-                                          ),
-                                          textStyle: NeumorphicTextStyle(
-                                            fontSize: 32,
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: height / 20,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -281,16 +769,15 @@ class _AlarmPageState extends State<AlarmPage> {
                             Expanded(
                               flex: 1,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: (isStart != true)
+                                    ? MainAxisAlignment.spaceEvenly
+                                    : MainAxisAlignment.center,
                                 children: [
                                   SizedBox(
-                                    width: width / 20,
-                                  ),
-                                  Container(
                                     width: 90,
                                     child: NeumorphicText(
                                       "HH",
-                                      style: NeumorphicStyle(
+                                      style: const NeumorphicStyle(
                                         color: Colors.black,
                                         depth: 1,
                                         intensity: 1,
@@ -300,11 +787,11 @@ class _AlarmPageState extends State<AlarmPage> {
                                       ),
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: 90,
                                     child: NeumorphicText(
                                       "MM",
-                                      style: NeumorphicStyle(
+                                      style: const NeumorphicStyle(
                                         color: Colors.black,
                                         depth: 1,
                                         intensity: 1,
@@ -314,11 +801,11 @@ class _AlarmPageState extends State<AlarmPage> {
                                       ),
                                     ),
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: 90,
                                     child: NeumorphicText(
                                       "SS",
-                                      style: NeumorphicStyle(
+                                      style: const NeumorphicStyle(
                                         color: Colors.black,
                                         depth: 1,
                                         intensity: 1,
@@ -346,19 +833,19 @@ class _AlarmPageState extends State<AlarmPage> {
                           child: Transform.scale(
                             scale: 1.3,
                             child: NeumorphicButton(
-                              style: NeumorphicStyle(
-                                color: Colors.grey.shade200,
-                                depth: 1,
-                                intensity: 1,
-                                boxShape: NeumorphicBoxShape.circle(),
-                              ),
-                              child: Icon(Icons.play_arrow_outlined),
-                              onPressed: () {
-                                setState(() {
-                                  isStart = true;
-                                });
-                              },
-                            ),
+                                style: NeumorphicStyle(
+                                  color: Colors.grey.shade200,
+                                  depth: 1,
+                                  intensity: 1,
+                                  boxShape: const NeumorphicBoxShape.circle(),
+                                ),
+                                child: const Icon(Icons.play_arrow_outlined),
+                                onPressed: () {
+                                  setState(() {
+                                    countStart();
+                                    isPause = false;
+                                  }); // Start the countdown
+                                }),
                           ),
                         ),
                         Visibility(
@@ -370,14 +857,16 @@ class _AlarmPageState extends State<AlarmPage> {
                                 child: NeumorphicButton(
                                   style: NeumorphicStyle(
                                     color: Colors.grey.shade200,
-                                    boxShape: NeumorphicBoxShape.circle(),
+                                    boxShape: const NeumorphicBoxShape.circle(),
                                   ),
                                   child: (isPause != true)
-                                      ? Icon(Icons.pause_sharp)
-                                      : Icon(Icons.play_arrow_outlined),
+                                      ? const Icon(Icons.pause_sharp)
+                                      : const Icon(Icons.play_arrow_outlined),
                                   onPressed: () {
                                     setState(() {
-                                      isPause = !isPause;
+                                      (isPause == false)
+                                          ? countStop()
+                                          : countStart();
                                     });
                                   },
                                 ),
@@ -390,15 +879,15 @@ class _AlarmPageState extends State<AlarmPage> {
                                 child: NeumorphicButton(
                                   style: NeumorphicStyle(
                                     color: Colors.grey.shade200,
-                                    boxShape: NeumorphicBoxShape.circle(),
+                                    boxShape: const NeumorphicBoxShape.circle(),
                                   ),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.restart_alt_sharp,
                                     color: Colors.red,
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      isStart = false;
+                                      countReset();
                                     });
                                   },
                                 ),
@@ -431,16 +920,16 @@ class _AlarmPageState extends State<AlarmPage> {
                             color: Colors.grey.shade200,
                             depth: -1,
                             intensity: 1,
-                            boxShape: NeumorphicBoxShape.circle(),
+                            boxShape: const NeumorphicBoxShape.circle(),
                           ),
                           child: Align(
                             alignment: Alignment.center,
                             child: NeumorphicText(
-                              "${t.houre}:${t.min}:${t.sec}",
+                              "$DigitHour:$DigitMin:$DigitSec",
                               textStyle: NeumorphicTextStyle(
                                 fontSize: 12,
                               ),
-                              style: NeumorphicStyle(
+                              style: const NeumorphicStyle(
                                 depth: 1,
                                 intensity: 1,
                                 color: Colors.black,
@@ -452,7 +941,7 @@ class _AlarmPageState extends State<AlarmPage> {
                     ),
                   ),
                   Expanded(
-                    flex: 3,
+                    flex: 5,
                     child: Align(
                       alignment: Alignment.center,
                       child: Column(
@@ -468,24 +957,23 @@ class _AlarmPageState extends State<AlarmPage> {
                                   child: NeumorphicButton(
                                     onPressed: () {
                                       setState(() {
-                                        isPlayed = !isPlayed;
+                                        isStart = !isStart;
                                       });
+                                      if (!isStart) {
+                                        stop(); // Reset when "Start" becomes "Reset"
+                                      } else {
+                                        start(); // Start the timer
+                                      }
                                     },
                                     style: NeumorphicStyle(
                                       color: Colors.grey.shade200,
                                     ),
-                                    child: (isPlayed != true)
-                                        ? Transform.scale(
-                                            scale: 1.45,
-                                            child: NeumorphicButton(
-                                              onPressed: () {},
-                                              child: Text(
-                                                "Start",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 22,
-                                                ),
-                                              ),
+                                    child: (!isStart)
+                                        ? const Text(
+                                            "Start",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 22,
                                             ),
                                           )
                                         : const Text(
@@ -501,12 +989,16 @@ class _AlarmPageState extends State<AlarmPage> {
                                   scale: 1,
                                   child: NeumorphicButton(
                                     onPressed: () {
-                                      setState(() {});
+                                      if (!isStart) {
+                                        reset(); // Reset the timer and clear records
+                                      } else {
+                                        addRecord(currentTimerValue);
+                                      }
                                     },
                                     style: NeumorphicStyle(
                                       color: Colors.grey.shade200,
                                     ),
-                                    child: (isPlayed != true)
+                                    child: (!isStart)
                                         ? const Text(
                                             "Reset",
                                             style: TextStyle(
@@ -526,9 +1018,55 @@ class _AlarmPageState extends State<AlarmPage> {
                               ],
                             ),
                           ),
+                          SizedBox(
+                            height: height / 30,
+                          ),
                           Expanded(
-                            flex: 3,
-                            child: Neumorphic(),
+                            flex: 5,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: Records.map((e) {
+                                  return Neumorphic(
+                                    margin: EdgeInsets.only(bottom: 7),
+                                    style: NeumorphicStyle(
+                                      color: Colors.grey.shade200,
+                                      depth: -1,
+                                      intensity: 1,
+                                    ),
+                                    child: SizedBox(
+                                      height: height / 27,
+                                      width: width / 1.5,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          NeumorphicText(
+                                            "Recorded",
+                                            textStyle: NeumorphicTextStyle(
+                                              fontSize: 16,
+                                            ),
+                                            style: const NeumorphicStyle(
+                                              depth: 1,
+                                              intensity: 1,
+                                            ),
+                                          ),
+                                          NeumorphicText(
+                                            e,
+                                            textStyle: NeumorphicTextStyle(
+                                              fontSize: 16,
+                                            ),
+                                            style: const NeumorphicStyle(
+                                              depth: 1,
+                                              intensity: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -544,7 +1082,7 @@ class _AlarmPageState extends State<AlarmPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Transform.scale(
-                  scale: 0.8,
+                  scale: 0.7,
                   child: NeumorphicButton(
                     style: NeumorphicStyle(
                       color: Colors.grey.shade200,
@@ -572,7 +1110,7 @@ class _AlarmPageState extends State<AlarmPage> {
                   ),
                 ),
                 Transform.scale(
-                  scale: 0.8,
+                  scale: 0.7,
                   child: NeumorphicButton(
                     style: NeumorphicStyle(
                       color: Colors.grey.shade200,
@@ -600,7 +1138,7 @@ class _AlarmPageState extends State<AlarmPage> {
                   ),
                 ),
                 Transform.scale(
-                  scale: 0.8,
+                  scale: 0.7,
                   child: NeumorphicButton(
                     style: NeumorphicStyle(
                       color: Colors.grey.shade200,
