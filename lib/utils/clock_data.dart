@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 List<Map> days = [
@@ -201,7 +200,7 @@ class CustomAlarm {
   TimeOfDay time;
   bool isDay;
 
-  CustomAlarm({required this.time});
+  CustomAlarm({required this.time, required this.isDay});
 }
 
 List<CustomAlarm> alarms = [];

@@ -1,5 +1,6 @@
-import 'dart:math';
 import 'dart:async';
+import 'dart:math';
+
 import 'package:clock_app/utils/clock_data.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
@@ -439,6 +440,7 @@ class _AlarmPageState extends State<AlarmPage> {
                                                         value: alarm.isDay,
                                                         onChanged: (val) {
                                                           setState(() {
+                                                            isAlarm = !isAlarm;
                                                             alarm.isDay = val;
                                                           });
                                                         }),
@@ -518,8 +520,8 @@ class _AlarmPageState extends State<AlarmPage> {
 
                         if (timeOfDay != null) {
                           setState(() {
-                            alarms.add(
-                                CustomAlarm(time: timeOfDay, isDay: false));
+                            alarms
+                                .add(CustomAlarm(time: timeOfDay, isDay: true));
                           });
                         }
                       },
