@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 
 List<Map> days = [
   {'day': 'SUN', 'isDay': false},
@@ -151,7 +152,6 @@ List<String> second = [
   "59",
 ];
 
-List Alarm = [];
 List Records = [];
 
 class Timer {
@@ -196,3 +196,12 @@ class ClockData {
     return selectedSecond;
   }
 }
+
+class CustomAlarm {
+  TimeOfDay time;
+  bool isDay;
+
+  CustomAlarm({required this.time});
+}
+
+List<CustomAlarm> alarms = [];

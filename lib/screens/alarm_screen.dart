@@ -11,8 +11,9 @@ class AlarmPage extends StatefulWidget {
 }
 
 class _AlarmPageState extends State<AlarmPage> {
-  bool isTrue = false;
+  TimeOfDay selectedTime = TimeOfDay.now();
   bool isAlarm = false;
+  bool isTrue = false;
   bool isAlarmPressed = true;
   bool isHourlyPressed = false;
   bool isTimerPresses = false;
@@ -36,7 +37,6 @@ class _AlarmPageState extends State<AlarmPage> {
   int minCount = 0;
   double hourDiv = 3 * pi / 2;
   int hourCount = 0;
-  TimeOfDay selectedTime = TimeOfDay.now();
   int selectedHour = 0;
   int selectedMinute = 0;
   int selectedSecond = 0;
@@ -74,12 +74,6 @@ class _AlarmPageState extends State<AlarmPage> {
     timerr();
   }
 
-  // ignore: non_constant_identifier_names
-  int Index() {
-    recordIndex++;
-    return recordIndex;
-  }
-
   void stop() {
     isStart = false;
   }
@@ -93,7 +87,7 @@ class _AlarmPageState extends State<AlarmPage> {
       DigitHour = "00";
       DigitMin = "00";
       DigitSec = "00";
-      Records.clear(); // Clear the list of records
+      Records.clear();
     });
   }
 
@@ -270,7 +264,7 @@ class _AlarmPageState extends State<AlarmPage> {
             child: Expanded(
               flex: 9,
               child: Stack(
-                alignment: const Alignment(0.8, 1.1),
+                alignment: const Alignment(0.8, 1),
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -383,7 +377,7 @@ class _AlarmPageState extends State<AlarmPage> {
                           child: SingleChildScrollView(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              children: Alarm.map((e) {
+                              children: alarms.map((alarm) {
                                 return Stack(
                                   alignment: const Alignment(1.05, -1.4),
                                   children: [
@@ -412,7 +406,7 @@ class _AlarmPageState extends State<AlarmPage> {
                                                         .spaceBetween,
                                                 children: [
                                                   Text(
-                                                    "${selectedTime.hour}:${selectedTime.minute}",
+                                                    "${alarm.time.hour}:${alarm.time.minute}",
                                                     style: TextStyle(
                                                       color: (isAlarm != true)
                                                           ? Colors.black12
@@ -442,11 +436,10 @@ class _AlarmPageState extends State<AlarmPage> {
                                                               Colors.grey
                                                                   .shade200,
                                                         ),
-                                                        value: isTrue,
+                                                        value: alarm.isDay,
                                                         onChanged: (val) {
                                                           setState(() {
-                                                            isAlarm = !isAlarm;
-                                                            isTrue = val;
+                                                            alarm.isDay = val;
                                                           });
                                                         }),
                                                   ),
@@ -487,7 +480,7 @@ class _AlarmPageState extends State<AlarmPage> {
                                     IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          Alarm.remove(e);
+                                          alarms.remove(alarm);
                                         });
                                       },
                                       icon: const Icon(
@@ -521,14 +514,14 @@ class _AlarmPageState extends State<AlarmPage> {
                           context: context,
                           initialTime: selectedTime,
                           initialEntryMode: TimePickerEntryMode.dial,
-                        ).then(
-                          (value) {
-                            selectedTime = value!;
-                          },
                         );
-                        setState(() {
-                          Alarm.add(selectedTime);
-                        });
+
+                        if (timeOfDay != null) {
+                          setState(() {
+                            alarms.add(
+                                CustomAlarm(time: timeOfDay, isDay: false));
+                          });
+                        }
                       },
                       child: const Icon(
                         Icons.add,
@@ -634,6 +627,21 @@ class _AlarmPageState extends State<AlarmPage> {
                                     ],
                                   ),
                                   Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      NeumorphicText(
+                                        ":",
+                                        style: NeumorphicStyle(
+                                          color: Colors.black,
+                                          depth: 1,
+                                          intensity: 1,
+                                        ),
+                                        textStyle:
+                                            NeumorphicTextStyle(fontSize: 36),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
@@ -695,6 +703,21 @@ class _AlarmPageState extends State<AlarmPage> {
                                       ),
                                       SizedBox(
                                         height: height / 20,
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      NeumorphicText(
+                                        ":",
+                                        style: NeumorphicStyle(
+                                          color: Colors.black,
+                                          depth: 1,
+                                          intensity: 1,
+                                        ),
+                                        textStyle:
+                                            NeumorphicTextStyle(fontSize: 36),
                                       ),
                                     ],
                                   ),
